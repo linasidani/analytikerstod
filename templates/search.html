@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analyst Support Tool</title>
+</head>
+<body>
+
+    <h1>Analyst Support Tool</h1>
+
+    <form method="get">
+        <input
+            type="text"
+            name="q"
+            value="{{ q }}"
+            placeholder="Search for a person"
+        >
+
+        <button type="submit">Search</button>
+    </form>
+
+    {% for person in results %}
+        <h2>{{ person["name"] }}</h2>
+        <p>{{ person["notes"] }}</p>
+    {% endfor %}
+
+</body>
+</html>

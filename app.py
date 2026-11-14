@@ -1,9 +1,16 @@
-from flask import Flask
+from flask import Flask, render_template, request
+from service import search
+
 app = Flask(__name__)       
 
 @app.route("/")             
-def hello():               
-    return "Hello World!"   
+def index(): 
+    q = request.args.get("q", "")
 
-if __name__ == "__main__": 
-    app.run(debug=True)
+    results = search (q) if q else []
+
+    return render_template(
+        "search.html",
+        q=q,
+        results=results
+    )              
