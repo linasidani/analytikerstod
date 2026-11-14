@@ -113,11 +113,36 @@ def find_organisations_for(person_id):
     conn.close()
     return rows
 
+def add_organisation(name, country):
+
+    conn = get_connection()
+    cur = conn.execute(
+        "INSERT INTO Organisation (name, country) VALUES (?, ?)",
+        (name, country)
+    )
+    new_id = cur.lastrowid
+
+    conn.commit()
+    conn.close()
+    return new_id
+
+def link_person_to_organisation(person_id, organisation_id, role=None):
+    conn = get_connection()
+
+    conn.execute(
+        """
+        INSERT OR IGNORE INTO Personorganisation
+        (person_id, organisation_id, role)
+        VALUES (?, ?, ?)
+        """,
+        (person_id, organisation_id, role)
+    )
+
+    conn.commit()
+    conn.close()
+    
+
 
 if __name__ == "__main__":
     create_tables()
     print("Database tables created successfully!")
-
-    add_person("Test Person", "Fictional test data")
-
-    print([dict(row) for row in find_people("test")])
