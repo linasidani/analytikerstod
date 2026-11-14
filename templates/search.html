@@ -19,9 +19,19 @@
         <button type="submit">Search</button>
     </form>
 
-    {% for person in results %}
-        <h2>{{ person["name"] }}</h2>
-        <p>{{ person["notes"] }}</p>
+    {% for result in results %}
+        <h2>{{ result["person"]["name"] }}</h2>
+
+        <p>{{ result["person"]["notes"] }}</p>
+
+        <h3>Organisations</h3>
+
+        {% for organisation in result["organisations"] %}
+
+            <p>{{ organisation["name"] }}</p>
+
+        {% endfor %}
+
     {% endfor %}
 
 </body>
