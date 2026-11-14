@@ -68,46 +68,36 @@ def create_tables():
 
     conn.commit()
     conn.close() 
-if __name__ == "__main__":
-    create_tables()
-    print("Database tables created successfully!")
 
-    def add_person(name,notes):
-        conn = get_connection()
 
-        cur = conn.execute(
-            "INSERT INTO Person (name, notes) VALUES (?, ?) ",
-            (name, notes)
-        )
+def add_person(name, notes):
+    conn = get_connection()
+    cur = conn.execute(
+        "INSERT INTO Person (name, notes) VALUES (?, ?)",
+        (name, notes)
+    )
+    new_id = cur.lastrowid
+    conn.commit()
+    conn.close()
+    return new_id
 
-        new_id = cur.lastrowid
 
-        conn.commit()
-        conn.close()
+def find_people(q):
+    conn = get_connection()
+    rows = conn.execute(
+        "SELECT * FROM Person WHERE name LIKE ?",
+        (f"%{q}%",)
+    ).fetchall()
+    conn.close()
+    return rows
 
-        return new_id
 
-    def find_people(q):
-        conn = get_connection()
+def add_log(what):
+    conn = get_connection()
+    conn.execute("INSERT INTO Log (what) VALUES (?)", (what,))
+    conn.commit()
+    conn.close()
 
-        rows = conn.execute(
-             "SELECT * FROM Person WHERE name LIKE ?",
-             (f"%{q}%",)
-        ) .fetchall()
-
-        conn.close()
-
-        return rows
-
-    def add_log(what):
-        conn = get_connection()
-
-        conn.execute(
-            "INSERT INTO Log (what) VALUES (?)",
-            (what,)
-        )
-        conn.commit()
-        conn.close()
 
 def find_organisations_for(person_id):
     conn = get_connection()
@@ -121,11 +111,12 @@ def find_organisations_for(person_id):
     """, (person_id,)).fetchall()
 
     conn.close()
-
     return rows
+
 
 if __name__ == "__main__":
     create_tables()
+    print("Database tables created successfully!")
 
     add_person("Test Person", "Fictional test data")
 
