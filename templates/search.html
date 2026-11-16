@@ -3,96 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <title>Analyst Support Tool</title>
+
+        <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f8fa;
+            color: #252b36;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        input {
+            box-sizing: border-box;
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 16px;
+            background: #344b70;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+.main {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+     .result {
+            border-top: 1px solid #eee;
+            padding: 12px 0;
+        }
+
+@media (max-width: 600px) {
+    .main {
+        grid-template-columns: 1fr;
+    }
+}
+    </style>
 </head>
 <body>
+     <h1>Analyst Support Tool</h1>
+    <p>Search and manage people and organisations.</p>
 
-    <h1>Analyst Support Tool</h1>
+    <div class="main">
 
-    <form method="get">
-        <input
-            type="text"
-            name="q"
-            value="{{ q }}"
-            placeholder="Search for a person or organsiation"
-        >
+        <section>
+            <h2>Search</h2>
 
-        <button type="submit">Search</button>
-    </form>
+            <form method="get">
+                <input
+                    type="text"
+                    name="q"
+                    value="{{ q }}"
+                    placeholder="Search for a person or organisation"
+                >
 
+                <button type="submit">Search</button>
+            </form>
+        </section>
+    <div>
+        <section>
+            <h2>Add a person</h2>
+            <form method="POST" action="/add-person">
+                <input 
+                type="text" 
+                name="person_name"
+                placeholder="Person name" 
+                required
+                >
 
-    <h2>Add a person</h2>
+                <input 
+                type="text" 
+                name="person_notes"
+                placeholder="Notes"
+                >
+                <button 
+                type="submit">Add person</button>
+            </form>
+        </section>
 
-    <form method="POST" action="/add-person">
-        <input
-            type="text"
-            name="person_name"
-            placeholder="Person name"
-            required
-        >
+        <section>
+            <h2>Add an organisation</h2>
+            <form method="POST" action="/add-organisation">
+                <input 
+                type="text" 
+                name="organisation_name"
+                placeholder="Organisation name" 
+                required
 
-        <input
-            type="text"
-            name="person_notes"
-            placeholder="Notes"
-        >
+                >
 
-        <button type="submit">Add person</button>
-    </form>
+                <input 
+                type="text" 
+                name="organisation_country"
+                placeholder="Country"
+                >
 
-    <h2>Add an organisation</h2>
-
-    <form method="POST" action="/add-organisation">
-        <input
-            type="text"
-            name="organisation_name"
-            placeholder="Organisation name"
-            required
-        >
-
-        <input
-            type="text"
-            name="organisation_country"
-            placeholder="Country"
-        >
-
-        <button type="submit">Add organisation</button>
-    </form>
-
+                <button 
+                type="submit">Add organisation</button>
+            </form>
+        </section>
+     </div>
+    </div>
 
     {% for result in results %}
+        <section class="result">
 
-        {% if result["type"] == "person" %}
-            
-            <h2>{{result["person"]["name"] }}</h2>
+            {% if result["type"] == "person" %}
+                <h2>{{ result["person"]["name"] }}</h2>
+                <p>{{ result["person"]["notes"] }}</p>
+                <h3>Organisations</h3>
 
-            <p>{{ result["person"]["notes"] }}</p>
+                {% for organisation in result["organisations"] %}
+                    <p>{{ organisation["name"] }}</p>
+                {% endfor %}
 
-            <h3>Organisations</h3>
+            {% elif result["type"] == "organisation" %}
+                <h2>{{ result["organisation"]["name"] }}</h2>
+                <p>{{ result["organisation"]["country"] }}</p>
+                <h3>Associated people</h3>
 
-            {% for organisation in result["organisations"] %}
-                <p>{{ organisation["name"] }}</p>
+                {% for person in result["people"] %}
+                    <p>{{ person["name"] }} - {{ person["role"] }}</p>
+                {% endfor %}
+            {% endif %}
 
-            {% endfor %}
-
-        {% elif result["type"] == "organisation" %}
-
-            <h2>{{ result["organisation"]["name"] }}</h2>
-
-            <p>{{ result["organisation"]["COUNTRY"] }}</p>
-
-            <h3>Associated people</h3>
-
-            {% for person in result["people"] %}
-                <p>
-                    {{ person["name"] }}
-                    {% if person["role"] %}
-                        - {{ person["role"] }}
-                    {% endif %}
-                </p>
-            {% endfor %}
-
-        {% endif %}
-
+        </section>
     {% endfor %}
 
 </body>
