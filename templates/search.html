@@ -13,24 +13,46 @@
             type="text"
             name="q"
             value="{{ q }}"
-            placeholder="Search for a person"
+            placeholder="Search for a person or organsiation"
         >
 
         <button type="submit">Search</button>
     </form>
 
     {% for result in results %}
-        <h2>{{ result["person"]["name"] }}</h2>
 
-        <p>{{ result["person"]["notes"] }}</p>
+        {% if result["type"] == "person" %}
+            
+            <h2>{{result["person"]["name"] }}</h2>
 
-        <h3>Organisations</h3>
+            <p>{{ result["person"]["notes"] }}</p>
+
+            <h3>Organisations</h3>
 
         {% for organisation in result["organisations"] %}
 
             <p>{{ organisation["name"] }}</p>
 
         {% endfor %}
+
+        {% elif result["type"] == "organisation" %}
+
+            <h2>{{ result["organisation"]["name"] }}</h2>
+
+            <p>{{ result["organisation"]["country"] }}</p>
+
+            <h3>Associated people</h3>
+
+            {% for person in result["people"] %}
+                <p>
+                    {{ person["name"] }}
+                    {% if person["role"] %}
+                        - {{ person["role"] }}
+                    {% endif %}
+                </p>
+            {% endfor %}
+
+        {% endif %}
 
     {% endfor %}
 

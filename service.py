@@ -1,6 +1,8 @@
 from models import (
     find_organisations_for,
     find_people,
+    find_organisations,
+    find_people_for_organisation,
     add_log,
 
 )
@@ -8,18 +10,31 @@ from models import (
 def search(q):
     add_log(f"search: {q}")
 
+    results = []
+
     people = find_people(q)
 
-    results = []
 
     for person in people:
 
-        organsisations = find_organisations_for(person["id"])
+        organisations = find_organisations_for(person["id"])
                                             
                                             
         results.append({
+            "type": "person",
             "person": person,
-            "organisations": organsisations
+            "organisations": organisations,
         })
+
+    organisations = find_organisations(q)
+
+    for organisation in organisations:
+        people = find_people_for_organisation(organisation["id"])
+
+        results.append({
+                "type": "organisation",
+                "organisation": organisation,
+                "people": people,
+            })
 
     return results

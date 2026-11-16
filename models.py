@@ -140,6 +140,41 @@ def link_person_to_organisation(person_id, organisation_id, role=None):
 
     conn.commit()
     conn.close()
+
+
+def find_organisations(q):
+    conn = get_connection()
+
+    rows = conn.execute(
+        """
+        SELECT *
+        FROM Organisation
+        WHERE name LIKE ? OR country LIKE ?
+        """,
+        (f"%{q}%", f"%{q}%")
+    ).fetchall()
+
+    conn.close()
+    return rows
+
+
+def find_people_for_organisation(organisation_id):
+    conn = get_connection()
+
+    rows = conn.execute(
+        """
+        SELECT Person.*, PersonOrganisation.role
+        FROM Person
+        JOIN PersonOrganisation
+            ON Person.id = PersonOrganisation.person_id
+        WHERE PersonOrganisation.organisation_id = ?
+        """,
+        (organisation_id,)
+    ).fetchall()
+
+    conn.close()
+    return rows
+
     
 
 
