@@ -19,6 +19,46 @@
         <button type="submit">Search</button>
     </form>
 
+
+    <h2>Add a person</h2>
+
+    <form method="POST" action="/add-person">
+        <input
+            type="text"
+            name="person_name"
+            placeholder="Person name"
+            required
+        >
+
+        <input
+            type="text"
+            name="person_notes"
+            placeholder="Notes"
+        >
+
+        <button type="submit">Add person</button>
+    </form>
+
+    <h2>Add an organisation</h2>
+
+    <form method="POST" action="/add-organisation">
+        <input
+            type="text"
+            name="organisation_name"
+            placeholder="Organisation name"
+            required
+        >
+
+        <input
+            type="text"
+            name="organisation_country"
+            placeholder="Country"
+        >
+
+        <button type="submit">Add organisation</button>
+    </form>
+
+
     {% for result in results %}
 
         {% if result["type"] == "person" %}
@@ -29,17 +69,16 @@
 
             <h3>Organisations</h3>
 
-        {% for organisation in result["organisations"] %}
+            {% for organisation in result["organisations"] %}
+                <p>{{ organisation["name"] }}</p>
 
-            <p>{{ organisation["name"] }}</p>
-
-        {% endfor %}
+            {% endfor %}
 
         {% elif result["type"] == "organisation" %}
 
             <h2>{{ result["organisation"]["name"] }}</h2>
 
-            <p>{{ result["organisation"]["country"] }}</p>
+            <p>{{ result["organisation"]["COUNTRY"] }}</p>
 
             <h3>Associated people</h3>
 
